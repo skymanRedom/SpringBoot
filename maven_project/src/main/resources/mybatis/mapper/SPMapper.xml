@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+（1）在mapper.xml中namespace等于mapper接口地址
+
+（2）mapper.java接口中的方法名和mapper.xml中statement的id一致
+
+（3）mapper.java接口中的方法输入参数类型和mapper.xml中statement的parameterType指定的类型一致。
+
+（4）mapper.java接口中的方法返回值类型和mapper.xml中statement的resultType指定的类型一致。
+-->
+<mapper namespace="com.maven.dao.SPMapperDao">
+
+    <!-- 
+	insert，返回值是：新插入行的主键（primary key）；需要包含<selectKey>语句，才会返回主键，否则返回值为null。
+	update/delete，返回值是：更新或删除的行数；无需指明resultType；但如果有约束异常而删除失败，只能去捕捉异常。 在jdbc的url里面加入useAffectedRows=true
+     -->
+    <update id="updateUser" parameterType="com.maven.model.UserEntity">
+       UPDATE 
+            users 
+       SET 
+        <if test="userName != null">userName = #{userName},</if>
+        <if test="passWord != null">passWord = #{passWord},</if>
+        nick_name = #{nickName}
+       WHERE 
+            id = #{id}
+    </update>
+
+    <select id="getUserName" parameterMap="getUserNameMap" statementType="CALLABLE" resultType="java.lang.String">
+        CALL in_out_param(?,?)
+    </select>
+    
+    <parameterMap type="java.util.Map" id="getUserNameMap">
+        <parameter property="id" mode="IN" jdbcType="INTEGER"/>
+        <parameter property="p_out" mode="OUT" jdbcType="VARCHAR"/>
+    </parameterMap>
+
+    <resultMap id="BaseResultMap" type="com.maven.model.UserEntity" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="userName" property="userName"  />
+        <result column="passWord" property="passWord"  />
+        <result column="user_sex" property="user_sex" />
+        <result column="nick_name" property="nick_name"  />
+    </resultMap>
+    
+    <!-- TODO: 可以使用实体对象封装返回值, 待验证 example：
+    
+    <resultMap id="flowLogsResultMap" type="com.hwt.glmf.log.vo.FlowLogModel">
+		<result column="ID" property="id" />
+		<result column="STATUS" property="status" />
+		<result column="OP_USER" property="op_user" />
+		<result column="OP_TIME" property="op_time" />
+		<result column="BILL_NO" property="bill_no" />
+		<result column="TRAN_NO" property="tran_no" />
+		<result column="MEMO" property="memo" />
+		<result column="DATA_TYPE" property="data_type" />		
+	</resultMap>
+ 
+	<select id="viewFlowLog" parameterType="java.util.Map" statementType="CALLABLE">
+	<![CDATA[
+		{call SP_TRACE_GET(#{I_DATA_TYPE,mode=IN,jdbcType=VARCHAR},
+		#{I_TRAN_NO,mode=IN,jdbcType=VARCHAR},#{I_BILL_NO,mode=IN,jdbcType=NUMERIC},
+		#{O_LIST,mode=OUT,jdbcType=CURSOR,javaType=java.sql.ResultSet,resultMap=flowLogsResultMap})}
+	]]>
+	</select>
+	
+	Map<String, Object> param = new HashMap<String, Object>();		 
+			param.put("I_DATA_TYPE", dataType);
+			param.put("I_TRAN_NO", tran_no);
+			param.put("I_BILL_NO", bill_no);
+			param.put("O_LIST", OracleTypes.CURSOR);
+			flowLogDao.viewFlowLog(param);
+	return (List<FlowLogModel>)param.get("O_LIST");
+	-->
+    
+
+    
+</mapper>
