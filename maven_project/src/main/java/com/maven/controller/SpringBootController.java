@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.maven.dao.SPMapperDao;
 import com.maven.mapper.UserMapper;
 import com.maven.model.UserEntity;
+import com.maven.redis.RedisUtil;
 
 
 @Controller
@@ -26,6 +27,9 @@ public class SpringBootController {
 
 	@Autowired
     private UserMapper userMapper;
+	
+	@Autowired
+	private RedisUtil redisUtil;
 	
 	@Autowired
 	private SPMapperDao spMapperDao;
@@ -45,6 +49,8 @@ public class SpringBootController {
 		user.setUserName("skyman8");
 		user.setPassWord("poi90-");
 		user.setNickName("skymanSpring1");
+		redisUtil.set("skyman8", user);
+		logger.info("get user from redis==" + redisUtil.get("skyman8"));
 		System.out.println("first spring boot mvc===" + spMapperDao.updateUser(user));
 		
  		return userMapper.getAll();
