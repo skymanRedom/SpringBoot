@@ -1,2 +1,2 @@
-env:dev
-jdbc:localhost
+env=dev
+jdbcserver=localhost
