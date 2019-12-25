@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 @EnableAutoConfiguration
 public class SpringCloudGatewayApplication {
 
+	//GatewayControllerEndpoint all routes/routefilters/... controller
 	public static void main(String[] args) {
 		SpringApplication.run(SpringCloudGatewayApplication.class, args);
 	}
