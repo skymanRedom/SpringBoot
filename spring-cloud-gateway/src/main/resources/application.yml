@@ -1,8 +1,24 @@
 spring:
   application:
     name: microservice-spring-gateway
-
+  cloud:
+    gateway:
+      routes:
+      - id: method_route
+        uri: http://localhost:7900/
+        predicates:
+        - Path=/api2/**
+        filters:
+        - AddRequestHeader=X-Request-Foo, Bar
+        
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
 logging:
   level:
     root: DEBUG
-     

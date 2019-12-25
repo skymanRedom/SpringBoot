@@ -18,7 +18,7 @@ public class SpringCloudGatewayApplication {
 	@Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(r -> r.path("/springGateway/**")
+                .route(r -> r.path("/springGateway/simple/**")
                           .filters(
                                 f -> f.stripPrefix(1)//去掉前缀：http://localhost:8080/springGateway/simple/1 -->http://localhost:7900/simple/1
                            )
