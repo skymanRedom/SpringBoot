@@ -17,6 +17,7 @@ public class AuthGatewayFilterFactory implements GlobalFilter, Ordered  {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String token = exchange.getRequest().getQueryParams().getFirst("token");
+        //get permission in db and save in cache
         if (token == null || token.isEmpty()) {
             logger.info( "token is empty..." );
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);

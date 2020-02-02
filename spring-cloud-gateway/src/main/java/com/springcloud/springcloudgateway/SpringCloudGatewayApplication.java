@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableAutoConfiguration
+@EnableRetry
 public class SpringCloudGatewayApplication {
 
 	//GatewayControllerEndpoint all routes/routefilters/... controller

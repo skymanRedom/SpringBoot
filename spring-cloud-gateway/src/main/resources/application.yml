@@ -2,6 +2,9 @@ spring:
   application:
     name: microservice-spring-gateway
   cloud:
+    loadbalancer:
+      retry:
+        enabled: true
     gateway:
       routes:
       - id: method_route
@@ -9,8 +12,62 @@ spring:
         predicates:
         - Path=/api2/**
         filters:
-        - AddRequestHeader=X-Request-Foo, Bar
-        
+        - StripPrefix=1
+        #- name: Hystrix
+          #args: 
+            #name: fallbackcmd
+            #fallbackUri: forward:/defaultFallback
+      - id: lb_route
+        uri: lb://api-load-balance
+        predicates:
+        - Path=/api_lb/**
+        filters:
+        - StripPrefix=1
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/fallbackcontroller
+        - name: Retry
+          args:
+            retries: 2
+            exceptions:
+             - java.util.concurrent.TimeoutException
+             - java.net.ConnectException
+
+api-load-balance:
+  ribbon:
+    listOfServers: localhost:7900,localhost:7901
+    NFLoadBalancerPingClassName: com.netflix.loadbalancer.PingUrl
+    #NFLoadBalancerRuleClassName: com.springcloud.springcloudgateway.framework.GameCenterBalanceRule
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    ServerListRefreshInterval: 60000
+    ConnectTimeout: 300
+    ReadTimeout: 10000
+    retryableStatusCodes: 500,404,502,503
+    OkToRetryOnAllOperations: true
+    MaxAutoRetriesNextServer: 1
+    MaxAutoRetries: 1
+
+ribbon:
+  eureka:
+    enabled: false
+  #global
+  #MaxAutoRetries: 1
+  #MaxAutoRetriesNextServer: 1
+  #OkToRetryOnAllOperations: true
+  #ReadTimeout: 5000
+  #ConnectTimeout: 10000
+
+hystrix:
+    command:
+      default:
+        execution:
+          timeout:
+            enabled: true
+          isolation:
+            thread:
+              timeoutInMilliseconds: 25000
+
 management:
   endpoints:
     web:
@@ -22,3 +79,5 @@ management:
 logging:
   level:
     root: DEBUG
+    
+
