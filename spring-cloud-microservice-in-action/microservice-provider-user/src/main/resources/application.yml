@@ -1,27 +1,25 @@
 server:
-  port: 7900
+  port: 7901
 spring:
   jpa:
     generate-ddl: false
     show-sql: true
     hibernate:
       ddl-auto: none
-  datasource:
-    platform: h2
-    schema: classpath:schema.sql
-    data: classpath:data.sql
+  #datasource:
+    #jdbc-url: jdbc:mysql://localhost:3306/mysql?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
   application:
     name: microservice-provider-user
 logging:
   level:
-    root: INFO
-    org.hibernate: INFO
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.hibernate.type.descriptor.sql.BasicExtractor: TRACE
-    com.itmuch: DEBUG
-eureka:
-  client:
-    healthcheck:
-      enabled: true
-    serviceUrl:
-      defaultZone: http://user:password123@localhost:8761/eureka
+    root: info
+    org.hibernate: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: DEBUG
+    org.hibernate.type.descriptor.sql.BasicExtractor: DEBUG
+    com.itmuch: info
+#eureka:
+#  client:
+ #   healthcheck:
+  #    enabled: true
+   # serviceUrl:
+    #  defaultZone: http://user:password123@localhost:8761/eureka

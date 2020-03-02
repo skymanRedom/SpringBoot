@@ -9,15 +9,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class User {
+public class Users {
 
-  public User(Long id, String username) {
+  public Users(Long id, String username) {
     super();
     this.id = id;
     this.username = username;
   }
 
-  public User() {
+  public Users() {
     super();
   }
 

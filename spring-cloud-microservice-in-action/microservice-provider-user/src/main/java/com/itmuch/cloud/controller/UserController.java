@@ -1,22 +1,25 @@
 package com.itmuch.cloud.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+//import org.springframework.cloud.client.ServiceInstance;
+//import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
-import com.itmuch.cloud.entity.User;
+//import com.google.common.collect.Lists;
+import com.itmuch.cloud.entity.Users;
 import com.itmuch.cloud.repository.UserRepository;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
+//import com.netflix.appinfo.InstanceInfo;
+//import com.netflix.discovery.EurekaClient;
 
 @RestController
 public class UserController {
@@ -24,50 +27,43 @@ public class UserController {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
-  private EurekaClient eurekaClient;
-
-  @Autowired
-  private DiscoveryClient discoveryClient;
-
+	/*
+	 * @Autowired private EurekaClient eurekaClient;
+	 * 
+	 * @Autowired private DiscoveryClient discoveryClient;
+	 */
+  @Resource(name="jndiDataSource")
+  private DataSource jndiDataSource;
+  
   @GetMapping("/simple/{id}")
-  public User findById(@PathVariable Long id) {
-    return this.userRepository.findOne(id);
+  public Optional<Users> findById(@PathVariable Long id) throws Exception {
+	  
+	  //need to check this ds is jndi??
+	  //InitialContext initialContext = new InitialContext();
+	  //DataSource datasource = (DataSource) initialContext.lookup("java:comp/env/jdbc/mysql");
+	  System.out.println("======"+jndiDataSource);
+	  Connection conn = jndiDataSource.getConnection();
+	  System.out.println("======"+conn.getMetaData().getDatabaseProductName());
+	  return this.userRepository.findById(id);
   }
 
-  @GetMapping("/eureka-instance")
-  public String serviceUrl() {
-    InstanceInfo instance = this.eurekaClient.getNextServerFromEureka("MICROSERVICE-PROVIDER-USER", false);
-    return instance.getHomePageUrl();
-  }
+	/*
+	 * @GetMapping("/eureka-instance") public String serviceUrl() { InstanceInfo
+	 * instance =
+	 * this.eurekaClient.getNextServerFromEureka("MICROSERVICE-PROVIDER-USER",
+	 * false); return instance.getHomePageUrl(); }
+	 */
 
-  @GetMapping("/instance-info")
-  public ServiceInstance showInfo() {
-    ServiceInstance localServiceInstance = this.discoveryClient.getLocalServiceInstance();
-    return localServiceInstance;
-  }
+	/*
+	 * @GetMapping("/instance-info") public ServiceInstance showInfo() {
+	 * ServiceInstance localServiceInstance =
+	 * this.discoveryClient.getLocalServiceInstance(); return localServiceInstance;
+	 * }
+	 */
 
   @PostMapping("/user")
-  public User postUser(@RequestBody User user) {
+  public Users postUser(@RequestBody Users user) {
     return user;
   }
 
-  // 该请求不会成功
-  @GetMapping("/get-user")
-  public User getUser(User user) {
-    return user;
-  }
-
-  @GetMapping("list-all")
-  public List<User> listAll() {
-    ArrayList<User> list = Lists.newArrayList();
-    User user = new User(1L, "zhangsan");
-    User user2 = new User(2L, "zhangsan");
-    User user3 = new User(3L, "zhangsan");
-    list.add(user);
-    list.add(user2);
-    list.add(user3);
-    return list;
-
-  }
 }
